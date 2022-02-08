@@ -5,6 +5,7 @@ from django.template.loader import get_template
 
 from django_otp.models import SideChannelDevice, ThrottlingMixin
 from django_otp.util import hex_validator, random_hex
+from django.utils.html import strip_tags
 
 from .conf import settings
 
@@ -64,10 +65,11 @@ class EmailDevice(ThrottlingMixin, SideChannelDevice):
         else:
             body = get_template(settings.OTP_EMAIL_BODY_TEMPLATE_PATH).render(context)
 
-        send_mail(subject=settings.OTP_EMAIL_SUBJECT,
-                  html_message=body,
-                  from_email=settings.OTP_EMAIL_SENDER,
-                  recipient_list=[self.email or self.user.email])
+        send_mail(settings.OTP_EMAIL_SUBJECT,
+                  strip_tags(body),
+                  settings.OTP_EMAIL_SENDER,
+                  [self.email or self.user.email],
+                  html_message=body)
 
         message = "sent by email"
 
