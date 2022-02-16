@@ -66,7 +66,7 @@ class EmailDevice(ThrottlingMixin, SideChannelDevice):
             body = get_template(settings.OTP_EMAIL_BODY_TEMPLATE_PATH).render(context)
 
         if settings.OTP_EMAIL_SUBJECT:
-            subject = Template(settings.OTP_EMAIL_SUBJECT).render(Context(context['extra_context']))
+            subject = Template(settings.OTP_EMAIL_SUBJECT).render(Context(extra_context))
         else:
             subject = settings.OTP_EMAIL_SUBJECT
 
