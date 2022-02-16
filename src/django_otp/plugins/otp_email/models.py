@@ -1,3 +1,6 @@
+# my personal access token = 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
+
+
 from django.core.mail import send_mail
 from django.db import models
 from django.template import Context, Template
@@ -6,6 +9,7 @@ from django.template.loader import get_template
 from django_otp.models import SideChannelDevice, ThrottlingMixin
 from django_otp.util import hex_validator, random_hex
 from django.utils.html import strip_tags
+from django.contrib.sites.shortcuts import get_current_site
 
 from .conf import settings
 
@@ -65,7 +69,12 @@ class EmailDevice(ThrottlingMixin, SideChannelDevice):
         else:
             body = get_template(settings.OTP_EMAIL_BODY_TEMPLATE_PATH).render(context)
 
-        send_mail(settings.OTP_EMAIL_SUBJECT,
+        if settings.OTP_EMAIL_SUBJECT:
+            subject = Template(settings.OTP_EMAIL_SUBJECT).render(Context(context['extra_context']))
+        else:
+            subject = settings.OTP_EMAIL_SUBJECT
+
+        send_mail(subject,
                   strip_tags(body),
                   settings.OTP_EMAIL_SENDER,
                   [self.email or self.user.email],
